@@ -1,22 +1,26 @@
-# CAS Portfolio
+# Sasha Marxuach · CAS Experience Website
 
-An IB CAS (Creativity, Activity, Service) portfolio: a custom static website with a live WebGL
-particle universe that morphs into the letters **C**, **A** and **S** as you scroll, frosted-glass cards
-that tilt in 3D, a spinnable 3D ring of interests, and a magazine-style page for every reflection.
+A custom, scroll-animated IB CAS website. It's built as one pinned "stage", so scrolling plays a sequence
+of page transitions instead of just moving down a page:
+
+1. **Cover:** "Sasha Marxuach CAS Experience Website" in shiny animated type over a live WebGL galaxy that
+   follows the mouse.
+2. **What is CAS?** As you scroll, the title flies up and becomes the header while the cover blurs and
+   zooms into a blue→teal→green page with an interactive Creativity / Activity / Service diagram.
+3. **About me:** rises up as a curved sheet. Scrolling (or swiping sideways) slides from the title and photos
+   to the info panel as one continuous page.
 
 No frameworks, no build step, no cost. It runs on free GitHub Pages.
 
 ```
 CAS website/
-├── content.js          ← THE ONLY FILE YOU EDIT (all your text lives here)
-├── index.html          homepage
-├── reflections.html    all reflections, filterable by strand
-├── reflection.html     one reflection (reflection.html?id=…)
+├── index.html          ← all the text lives here (look for the EDIT comments)
 └── assets/
-    ├── img/            ← upload your photos here
-    ├── files/          ← upload your CAS Personal Profile PDF here
+    ├── img/            ← your photos: about-1.jpg, about-2.jpg, about-3.jpg
     ├── css/style.css
-    └── js/             render.js · ui.js · scene.js (particles)
+    └── js/
+        ├── main.js     scroll choreography
+        └── galaxy.js   the particle galaxy
 ```
 
 ## Publish it (one time, ~2 minutes)
@@ -32,20 +36,24 @@ After that, every change you commit to the `CAS website` folder republishes auto
 If the deploy says the branch "is not allowed to deploy to github-pages", go to **Settings → Environments →
 github-pages** and add your default branch under *Deployment branches*.
 
-## Update your content
+## Edit the text
 
-Everything is in **`CAS website/content.js`**. Open it on GitHub, click the ✏️ pencil, edit, commit.
+Open `CAS website/index.html` on GitHub, click the ✏️ pencil, and search for `EDIT:`. Each marked spot is a
+placeholder: the "What is CAS?" description and the About me text. Replace the words between the tags and
+commit.
 
-- Text starting with **✎** is a placeholder. It shows on the site with an amber dashed underline so you can
-  find what still needs writing. Delete the ✎ when you replace it.
-- Formatting: `*italic*`, `**bold**`, `[link text](https://…)`.
-- **Photos:** in the `CAS website/assets/img` folder use **Add file → Upload files**, then reference them as
-  `"assets/img/your-photo.jpg"`. Keep photos under ~500 KB (resize them first) so the site stays fast.
-- **New quarterly reflection:** copy the whole `{ … }` block of the last reflection in `reflections: [ … ]`,
-  paste it underneath, give it a new `id`, and fill in each section. It automatically appears on the homepage
-  timeline, the reflections page, the strand counts and the learning-outcome tracker.
-- If you break the file (usually a missing comma or quote), the site shows a "content.js needs fixing"
-  message instead of a blank page.
+## Add your photos
+
+Go to `CAS website/assets/img` → **Add file → Upload files** and upload three photos named exactly:
+
+| File name     | Where it appears                      |
+|---------------|---------------------------------------|
+| `about-1.jpg` | About me, large photo next to the title |
+| `about-2.jpg` | About me, small photo next to the title |
+| `about-3.jpg` | About me, photo beside your text        |
+
+They replace the placeholders automatically. No code changes needed. Resize photos to under ~500 KB first so
+the site stays fast.
 
 ## Preview locally
 
@@ -53,6 +61,7 @@ Double-click `CAS website/index.html`. Everything works offline except the Googl
 
 ## Accessibility & performance
 
-- Respects *reduced motion*: animations, particle drift and the custom cursor turn off.
-- Falls back to an animated gradient background if WebGL isn't available.
-- Particle count drops automatically on phones and low-power devices; rendering pauses in background tabs.
+- Respects *reduced motion*: ambient animations, blur and galaxy drift turn off; the scroll story still works.
+- Without WebGL, the galaxy falls back to a soft animated gradient.
+- The galaxy uses fewer particles on phones and stops rendering once you've scrolled past the cover.
+- About me can be moved sideways with a trackpad swipe, a sideways touch swipe, or the ← → arrow keys.

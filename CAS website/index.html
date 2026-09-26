@@ -3,52 +3,153 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>CAS Portfolio</title>
-  <meta name="description" content="IB CAS portfolio: creativity, activity and service, documented and reflected on over two years.">
-  <meta name="theme-color" content="#05050b">
-  <meta property="og:title" content="CAS Portfolio">
-  <meta property="og:description" content="IB CAS portfolio: creativity, activity and service.">
-  <meta property="og:type" content="website">
+  <title>Sasha Marxuach · CAS Experience Website</title>
+  <meta name="description" content="Sasha Marxuach's IB CAS experience website: creativity, activity and service.">
+  <meta name="theme-color" content="#f6fafc">
+  <meta property="og:title" content="Sasha Marxuach · CAS Experience Website">
+  <meta property="og:description" content="Creativity, activity and service: documented over two years of the IB Diploma.">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@300..700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Unbounded:wght@500;700;800;900&display=swap">
   <link rel="stylesheet" href="assets/css/style.css">
-  <script>
-    (function (c) {
-      try {
-        var s = window.sessionStorage;
-        if (!s.getItem('cas-visited')) c.add('first-visit');
-        else if (s.getItem('cas-nav')) { c.add('from-nav'); s.removeItem('cas-nav'); }
-      } catch (e) { /* storage blocked: skip the intro */ }
-    })(document.documentElement.classList);
-  </script>
+  <script>document.documentElement.classList.add('js', 'theme-home');</script>
 </head>
-<body data-page="home">
-  <a class="skip" href="#main">Skip to content</a>
-  <div class="nebula" aria-hidden="true"><i></i><i></i><i></i></div>
-  <canvas id="scene" aria-hidden="true"></canvas>
-  <div class="grain" aria-hidden="true"></div>
-  <div class="progress" aria-hidden="true"></div>
+<body>
 
-  <header id="nav"></header>
-  <main id="main"></main>
-  <footer id="footer"></footer>
-  <noscript><p class="noscript">This portfolio needs JavaScript turned on to show its content.</p></noscript>
+  <!-- ===================================================================
+       THE TITLE: big on the cover, then flies up to become the top bar.
+       =================================================================== -->
+  <header class="brand" id="brand">
+    <div class="brand__bar" aria-hidden="true"></div>
+    <h1 class="brand__title" aria-label="Sasha Marxuach CAS Experience Website">
+      <span class="brand__line brand__line--1" aria-hidden="true"><span class="bw"><span class="bw__t" style="--i:0">Sasha</span></span> <span class="bw"><span class="bw__t" style="--i:1">Marxuach</span></span></span>
+      <span class="brand__line brand__line--2" aria-hidden="true"><span class="bw"><span class="bw__t" style="--i:2">CAS</span></span> <span class="bw"><span class="bw__t" style="--i:3">Experience</span></span> <span class="bw"><span class="bw__t" style="--i:4">Website</span></span></span>
+    </h1>
+    <!-- invisible copy of the title at its docked size: main.js measures it -->
+    <div class="brand__dock" aria-hidden="true"><span>Sasha</span> <span>Marxuach</span> <span>CAS</span> <span>Experience</span> <span>Website</span></div>
+  </header>
 
-  <div class="cursor" aria-hidden="true"><i class="cursor__dot"></i><i class="cursor__ring"><span></span></i></div>
-  <div class="curtain" aria-hidden="true"></div>
-  <div class="loader" aria-hidden="true">
-    <div class="loader__bar"><i></i></div>
-    <div class="loader__inner">
-      <span class="loader__label">CAS Portfolio<br>Creativity · Activity · Service</span>
-      <span class="loader__count">000</span>
+  <main class="stage" id="stage">
+    <div class="stage__sticky">
+
+      <!-- =================================================================
+           PAGE 1 · COVER
+           ================================================================= -->
+      <section class="scene scene--home" aria-label="Cover">
+        <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+        <canvas id="galaxy" aria-hidden="true"></canvas>
+        <div class="home__haze" aria-hidden="true"></div>
+        <button class="home__cue" type="button" data-goto="cas">
+          <span>Scroll to begin</span>
+          <i aria-hidden="true"></i>
+        </button>
+      </section>
+
+      <!-- =================================================================
+           PAGE 2 · WHAT IS CAS?
+           ================================================================= -->
+      <section class="scene scene--cas" id="what-is-cas" aria-labelledby="cas-title">
+        <div class="cas__bg" aria-hidden="true">
+          <i class="blob blob--1"></i><i class="blob blob--2"></i><i class="blob blob--3"></i>
+          <div class="dots"></div>
+          <span class="shape shape--ring" style="--x:8%;--y:20%;--s:70px;--d:0s"></span>
+          <span class="shape shape--plus" style="--x:44%;--y:14%;--s:26px;--d:-2s"></span>
+          <span class="shape shape--dot" style="--x:52%;--y:78%;--s:16px;--d:-4s"></span>
+          <span class="shape shape--ring" style="--x:90%;--y:12%;--s:34px;--d:-6s"></span>
+          <span class="shape shape--plus" style="--x:6%;--y:72%;--s:20px;--d:-1s"></span>
+          <span class="shape shape--dot" style="--x:94%;--y:62%;--s:10px;--d:-3s"></span>
+          <svg class="waves" viewBox="0 0 1440 200" preserveAspectRatio="none">
+            <path class="wave wave--back" d="M0 110 Q180 50 360 110 T720 110 T1080 110 T1440 110 T1800 110 T2160 110 T2520 110 T2880 110 V200 H0 Z"/>
+            <path class="wave wave--front" d="M0 140 Q180 90 360 140 T720 140 T1080 140 T1440 140 T1800 140 T2160 140 T2520 140 T2880 140 V200 H0 Z"/>
+          </svg>
+        </div>
+
+        <div class="cas__inner">
+          <div class="cas__text">
+            <h2 class="cas__title" id="cas-title"><span data-chars>What is</span> <span class="cas__big" data-chars>CAS</span><span class="cas__q">?</span></h2>
+            <!-- EDIT: replace this placeholder with your own description of CAS -->
+            <p class="cas__desc">
+              Placeholder: a short description of CAS goes here. In two or three sentences, explain what
+              Creativity, Activity and Service are, why they are part of the IB Diploma, and what they
+              will look like for you over the next two years.
+            </p>
+          </div>
+
+          <div class="venn" data-venn aria-hidden="true">
+            <div class="venn__rig">
+              <div class="venn__orbit"></div>
+              <div class="cw cw--c"><div class="circle circle--c"><span>Creativity</span></div></div>
+              <div class="cw cw--a"><div class="circle circle--a"><span>Activity</span></div></div>
+              <div class="cw cw--s"><div class="circle circle--s"><span>Service</span></div></div>
+              <span class="venn__core">CAS</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================================
+           PAGE 3 · ABOUT ME  (two panels you move through sideways)
+           Photos: upload into CAS website/assets/img/ with these exact names:
+           about-1.jpg, about-2.jpg, about-3.jpg. They replace the placeholders.
+           ================================================================= -->
+      <section class="scene scene--about" id="about-me" aria-labelledby="about-title">
+        <div class="about__track">
+          <div class="about__bgtext" aria-hidden="true">About me ✦ About me ✦ About me ✦ About me ✦</div>
+          <svg class="about__thread" viewBox="0 0 2000 1000" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="thread-grad" x1="0" x2="1" y1="0" y2="0">
+                <stop offset="0" stop-color="#1f6bff"/><stop offset=".5" stop-color="#0fb5a6"/><stop offset="1" stop-color="#2fcf7f"/>
+              </linearGradient>
+            </defs>
+            <path pathLength="1" d="M-20 830 C 240 960, 480 600, 760 760 S 1180 980, 1400 700 S 1780 360, 2020 470"/>
+          </svg>
+
+          <!-- panel 1: title + two photos -->
+          <div class="panel panel--intro">
+            <h2 class="about__title" id="about-title">
+              <span class="about__w" data-chars>About</span>
+              <span class="about__w about__w--grad" data-chars>me</span>
+            </h2>
+            <div class="about__photos">
+              <figure class="photo photo--1" data-tilt>
+                <img src="assets/img/about-1.jpg" alt="Sasha Marxuach" onerror="this.remove()">
+                <figcaption class="photo__ph"><b>Photo 1</b><small>assets/img/about-1.jpg</small></figcaption>
+              </figure>
+              <figure class="photo photo--2" data-tilt>
+                <img src="assets/img/about-2.jpg" alt="" onerror="this.remove()">
+                <figcaption class="photo__ph"><b>Photo 2</b><small>assets/img/about-2.jpg</small></figcaption>
+              </figure>
+            </div>
+            <button class="about__hint" type="button" data-goto="info">
+              <span>Scroll right</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+
+          <!-- panel 2: the info -->
+          <div class="panel panel--info">
+            <figure class="photo photo--3" data-tilt>
+              <img src="assets/img/about-3.jpg" alt="" onerror="this.remove()">
+              <figcaption class="photo__ph"><b>Photo 3</b><small>assets/img/about-3.jpg</small></figcaption>
+            </figure>
+            <div class="about__copy">
+              <p class="about__label"><span></span>About me</p>
+              <!-- EDIT: replace these placeholders with your own words -->
+              <p class="about__lead">Placeholder: a one-line introduction. Who you are, in a sentence.</p>
+              <p>Placeholder: two or three sentences about where you are from, what you care about and how you spend your time outside of class.</p>
+              <p>Placeholder: what drives you, what you are good at, and what you hope to get out of CAS over the next two years.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="about__dots" aria-hidden="true"><i class="is-on"></i><i></i></div>
+      </section>
+
     </div>
-  </div>
+  </main>
 
-  <script src="content.js"></script>
-  <script src="assets/js/render.js"></script>
-  <script src="assets/js/ui.js"></script>
-  <script src="assets/js/scene.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/galaxy.js"></script>
 </body>
 </html>
