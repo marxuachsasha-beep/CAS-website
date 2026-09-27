@@ -1,7 +1,7 @@
 /* ==========================================================================
    Sasha Marxuach · CAS Experience Website
    Cover: glossy black type on white with a blue galaxy.
-   "What is CAS?": light sky blue among the stars.  About me: mint.
+   "What is CAS?" and About me: white-mint pages with navy type, white cards and blue→teal accents.
    Type: Unbounded (display) + Figtree (text).
    ========================================================================== */
 
@@ -57,7 +57,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   -webkit-mask-image: linear-gradient(#000 50%, transparent); mask-image: linear-gradient(#000 50%, transparent);
   transition: background .6s ease;
 }
-.theme-cas .brand__bar { background: linear-gradient(180deg, rgba(214, 232, 255, .92), rgba(214, 232, 255, 0)); }
+.theme-cas .brand__bar { background: linear-gradient(180deg, rgba(246, 252, 250, .94), rgba(246, 252, 250, 0)); }
 .theme-about .brand__bar { background: linear-gradient(180deg, rgba(239, 250, 246, .94), rgba(239, 250, 246, 0)); }
 
 .brand__title {
@@ -103,8 +103,9 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .bg--cas {
   z-index: 0;
   background:
-    radial-gradient(55% 55% at 72% 46%, rgba(255, 255, 255, .55), rgba(255, 255, 255, 0) 70%),
-    radial-gradient(120% 100% at 70% 42%, #cfe3ff 0%, #b3d1ff 40%, #9cc1fb 75%, #8db6f6 100%);
+    radial-gradient(55% 60% at 85% 15%, rgba(92, 225, 230, .13), transparent 62%),
+    radial-gradient(55% 60% at 8% 92%, rgba(79, 160, 255, .11), transparent 62%),
+    #f6fbfa;
 }
 .bg--home {
   z-index: 1;
@@ -152,8 +153,16 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 @keyframes wheel { 0% { transform: translateY(0); opacity: 0; } 30% { opacity: 1; } 100% { transform: translateY(14px); opacity: 0; } }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } }
 
-/* ---------- page 2: what is CAS? (among the stars) ---------- */
+/* ---------- page 2: what is CAS? (same family as About me) ---------- */
 .scene--cas { color: var(--navy); }
+.cas__bgtext {
+  position: absolute; left: 0; top: 50%; translate: 0 -50%;
+  white-space: nowrap; pointer-events: none; user-select: none;
+  font-family: var(--display); font-weight: 900; font-size: 34vh; line-height: 1; letter-spacing: -.05em;
+  color: rgba(15, 181, 166, .06);
+  animation: glide 60s linear infinite alternate;
+}
+@keyframes glide { from { transform: translateX(-4vw); } to { transform: translateX(-38vw); } }
 .js .scene--cas { opacity: 0; visibility: hidden; }
 .cas__inner {
   position: relative; height: 100%;
@@ -164,12 +173,17 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .cas__title {
   font-family: var(--display); font-weight: 900; font-size: clamp(54px, 8vw, 144px);
   line-height: .95; letter-spacing: -.04em;
-  text-shadow: 0 20px 50px rgba(30, 80, 200, .16);
+}
+.cas__big .ch {
+  background: linear-gradient(100deg, var(--blue), var(--teal) 70%);
+  background-size: 300% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: hue 6s ease-in-out infinite alternate;
 }
 .cas__title > span { display: inline-block; }
 .cas__big { margin-top: .06em; }
 .cas__q {
-  display: inline-block; color: #2563eb; text-shadow: 0 0 34px rgba(37, 99, 235, .35);
+  display: inline-block; color: var(--teal);
   transform-origin: 50% 90%;
   opacity: 0; scale: .3; rotate: -40deg;
   transition: opacity .5s ease .55s, scale .9s var(--spring) .55s, rotate .9s var(--spring) .55s;
@@ -180,25 +194,17 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .ch { display: inline-block; white-space: pre; opacity: 0; transform: translateY(-80%) rotate(-10deg); transition: transform .9s var(--spring), opacity .5s ease; transition-delay: calc(var(--i) * 45ms); }
 .is-active .ch { opacity: 1; transform: none; }
 
-/* the description: an editorial block with a glowing rule, no box */
+/* the description: the same frosted white card as the About me text */
 .cas__desc {
-  position: relative; max-width: 500px; margin-top: 38px; padding: 4px 0 4px 30px;
-  font-size: clamp(17px, 1.35vw, 21px); line-height: 1.72; color: #26436a;
+  position: relative; max-width: 540px; margin-top: 36px; display: grid; gap: 14px;
+  padding: clamp(22px, 2.6vw, 34px); border-radius: 28px;
+  background: rgba(255, 255, 255, .66); border: 1px solid rgba(255, 255, 255, .95);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  box-shadow: 0 30px 60px -40px rgba(11, 37, 69, .35);
+  font-size: clamp(16px, 1.25vw, 19px); line-height: 1.7; color: var(--ink-2);
   opacity: 0; translate: 0 26px; transition: opacity .8s ease .5s, translate 1s var(--ease) .5s;
 }
-.cas__desc::before {
-  content: ""; position: absolute; left: 0; top: 6px; bottom: 6px; width: 2px; border-radius: 2px;
-  background: linear-gradient(180deg, var(--blue), rgba(31, 107, 255, .08));
-  transform-origin: top; scale: 1 0; transition: scale 1.2s var(--ease) .7s;
-}
-.cas__desc::after {
-  content: ""; position: absolute; left: -4px; top: 0; width: 10px; height: 10px; border-radius: 50%;
-  background: #fff; box-shadow: 0 0 0 3px var(--blue), 0 0 18px rgba(31, 107, 255, .6);
-  opacity: 0; transition: opacity .6s ease .7s;
-}
 .is-active .cas__desc { opacity: 1; translate: none; }
-.is-active .cas__desc::before { scale: 1 1; }
-.is-active .cas__desc::after { opacity: 1; }
 
 /* the interactive diagram: three glass circles; hover one and it takes the centre */
 .venn { position: relative; width: min(44vw, 600px, 66vh); aspect-ratio: 1; justify-self: center; perspective: 1200px; }
@@ -221,9 +227,9 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   -webkit-tap-highlight-color: transparent;
 }
 .is-active .orb { scale: 1; opacity: 1; }
-.orb--c { left: 0; top: 4%;   --ox: 36%;  --oy: 29%;  --ax: -30%; --ay: -34%; --pop: .35s; --c1: #8eaeff; --c2: #2f5bff; }
-.orb--a { right: 0; top: 4%;  --ox: -36%; --oy: 29%;  --ax: 30%;  --ay: -34%; --pop: .5s;  --c1: #8fd0ff; --c2: #1a84f0; }
-.orb--s { left: 21%; bottom: 0; --ox: 0%; --oy: -36%; --ax: 0%;   --ay: 33%;  --pop: .65s; --c1: #a4e6ff; --c2: #1d9fdc; }
+.orb--c { left: 0; top: 4%;   --ox: 36%;  --oy: 29%;  --ax: -30%; --ay: -34%; --pop: .35s; --c1: #8fb4ff; --c2: #1f6bff; }
+.orb--a { right: 0; top: 4%;  --ox: -36%; --oy: 29%;  --ax: 30%;  --ay: -34%; --pop: .5s;  --c1: #8fdcff; --c2: #1597e0; }
+.orb--s { left: 21%; bottom: 0; --ox: 0%; --oy: -36%; --ax: 0%;   --ay: 33%;  --pop: .65s; --c1: #8ff0e2; --c2: #0fb5a6; }
 .venn[data-open] .orb { --tx: var(--ax); --ty: var(--ay); --sc: .4; z-index: 3; transition-delay: 0s; }
 .venn[data-open] .orb.is-open { --tx: var(--ox); --ty: var(--oy); --sc: 1.52; z-index: 2; }
 /* only the round button itself takes the pointer (its children would make the hit area square) */
@@ -261,7 +267,8 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .orb__desc {
   max-width: 17em; max-height: 0; overflow: hidden; opacity: 0;
   font-weight: 500; font-size: clamp(8.5px, .78vw, 11.5px); line-height: 1.45; color: rgba(255, 255, 255, .96);
-  text-shadow: 0 1px 10px rgba(8, 26, 110, .55);
+  padding: 10px 14px; margin: -10px -14px;               /* room for the text shadow inside the clip */
+  text-shadow: 0 1px 6px rgba(8, 26, 110, .38);
   transition: opacity .35s ease, max-height .6s ease;
 }
 .orb.is-open .orb__desc { max-height: 12em; opacity: 1; transition-delay: .3s, 0s; }
@@ -292,8 +299,8 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .portal {
   position: absolute; left: 0; top: 0; width: 0; height: 0; border-radius: 50%;
   pointer-events: none; opacity: 0;
-  border: 2px solid rgba(255, 255, 255, .95);
-  box-shadow: 0 0 34px 8px rgba(59, 130, 246, .45), inset 0 0 34px 6px rgba(59, 130, 246, .3);
+  border: 2px solid rgba(31, 107, 255, .55);
+  box-shadow: 0 0 34px 6px rgba(15, 181, 166, .3), inset 0 0 34px 6px rgba(31, 107, 255, .18);
 }
 
 /* ---------- page 3: about me ---------- */
@@ -398,7 +405,8 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 
   .cas__inner { grid-template-columns: minmax(0, 1fr); align-content: center; gap: 20px; padding: 84px 22px 64px; }
   .cas__title { font-size: 14vw; }
-  .cas__desc { margin-top: 18px; font-size: 16px; line-height: 1.6; padding-left: 22px; }
+  .cas__desc { margin-top: 18px; font-size: 15px; line-height: 1.55; padding: 18px 20px; gap: 8px; border-radius: 22px; }
+  .cas__bgtext { font-size: 22vh; }
   .venn { width: min(76vw, 38svh); margin-top: 6px; }
   .orb__name { font-size: 10px; }
   .orb__desc { font-size: 7.6px; }

@@ -1,8 +1,8 @@
 /* Spiral galaxy drawn with raw WebGL (no libraries).
    Sits behind the cover title and follows the mouse. During the first scroll
    transition main.js calls Galaxy.setWarp(0..1) (the camera flies into the
-   galaxy) and Galaxy.setNight(0..1) (ink-blue dots on white turn into glowing
-   stars on the blue "What is CAS?" page). */
+   galaxy) and Galaxy.setNight(0..1) (the dots thin out and the few that are
+   left become small, sharp blue stars on the white "What is CAS?" page). */
 (function () {
   'use strict';
 
@@ -64,11 +64,11 @@
     '  vec4 mv = uView * vec4(p, 1.0);',
     '  gl_Position = uProj * mv;',
     '  float dayPx = uSize * size * uPR / max(0.4, -mv.z);',
-    '  float starPx = (16.0 + 26.0 * h2 * h2) * uPR;',                      // glow sprite; the bright core is ~1/6 of it
+    '  float starPx = (9.0 + 13.0 * h2 * h2) * uPR;',                       // small sprites: a crisp dot, sparkle on the bigger ones
     '  gl_PointSize = min(mix(dayPx, starPx, uStarMix), 48.0 * uPR);',
     '  vAlpha *= 1.0 - 0.8 * smoothstep(7.0 * uPR, 34.0 * uPR, dayPx) * (1.0 - uStarMix);',
     '  vStar = uStarMix;',
-    '  vSpike = smoothstep(0.55, 0.95, h2);',
+    '  vSpike = smoothstep(0.3, 0.8, h2);',
     '  vColor = col;',
     '}'
   ].join('\n');
@@ -82,10 +82,10 @@
     '  float d = length(c);',
     '  float dotA = 1.0 - smoothstep(0.0, 0.5, d);',                      // cover: soft round ink dot
     '  dotA = dotA * dotA * 0.7 + 0.75 * (1.0 - smoothstep(0.12, 0.26, d));',
-    '  float core = exp(-d * d * 220.0);',                                    // night: a glowing star
-    '  float halo = exp(-d * 7.0) * 0.55;',
-    '  float spikes = exp(-abs(c.x) * 70.0) * exp(-abs(c.y) * 8.0) + exp(-abs(c.y) * 70.0) * exp(-abs(c.x) * 8.0);',
-    '  float starA = (core + halo + spikes * 0.6 * vSpike) * (1.0 - smoothstep(0.36, 0.5, d));',
+    '  float core = 1.0 - smoothstep(0.1, 0.15, d);',                        // night: a sharp little star
+    '  float halo = exp(-d * 14.0) * 0.22;',
+    '  float spikes = exp(-abs(c.x) * 30.0) * (1.0 - smoothstep(0.0, 0.5, abs(c.y))) + exp(-abs(c.y) * 30.0) * (1.0 - smoothstep(0.0, 0.5, abs(c.x)));',
+    '  float starA = max(core, halo + spikes * vSpike) * (1.0 - smoothstep(0.44, 0.5, d));',
     '  float a = mix(dotA, starA, vStar);',
     '  a = clamp(a * vAlpha * uOpacity, 0.0, 1.0);',
     '  gl_FragColor = vec4(vColor * a, a * (1.0 - uAdd));',
@@ -167,9 +167,9 @@
   function rgb(hex) { var n = parseInt(hex.slice(1), 16); return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255]; }
   var KEYS = ['core', 'mid', 'outer', 'edge', 'star'];
   var UNI = { core: 'uCore', mid: 'uMid', outer: 'uOuter', edge: 'uEdge', star: 'uStar' };
-  // day: ink blues on the white cover · night: glowing stars on the blue page
+  // day: ink blues on the white cover · night: the few remaining stars, still blue so they show on white
   var DAY = { core: '#1e3a8a', mid: '#2563eb', outer: '#3b82f6', edge: '#60a5fa', star: '#93c5fd' };
-  var NIGHT = { core: '#ffffff', mid: '#e3eeff', outer: '#b4cfff', edge: '#d6e6ff', star: '#e6f0ff' };
+  var NIGHT = { core: '#1d4ed8', mid: '#1f5eea', outer: '#2563eb', edge: '#1383d4', star: '#2f6fe8' };
   KEYS.forEach(function (k) { DAY[k] = rgb(DAY[k]); NIGHT[k] = rgb(NIGHT[k]); });
   var lastNight = -1;
   function applyNight(n) {
@@ -179,13 +179,13 @@
       var a = DAY[k], b = NIGHT[k];
       gl.uniform3f(U[UNI[k]], a[0] + (b[0] - a[0]) * n, a[1] + (b[1] - a[1]) * n, a[2] + (b[2] - a[2]) * n);
     });
-    gl.uniform1f(U.uOpacity, 1.5 - 0.1 * n);
-    gl.uniform1f(U.uAdd, 0.85 * n);
+    gl.uniform1f(U.uOpacity, 1.5);
+    gl.uniform1f(U.uAdd, 0);
     gl.uniform1f(U.uNight, n);
     // fly-in keeps the small dots and thins them out; only the ~3% that survive bloom into stars, at the very end
     function ss(a, b, v) { var t = Math.min(1, Math.max(0, (v - a) / (b - a))); return t * t * (3 - 2 * t); }
     var keep = 1.02 + (0.25 - 1.02) * ss(0, 0.7, n);
-    gl.uniform1f(U.uKeep, keep + (0.03 - keep) * ss(0.7, 1, n));
+    gl.uniform1f(U.uKeep, keep + (0.016 - keep) * ss(0.7, 1, n));   // ~1.5% survive
     gl.uniform1f(U.uStarMix, ss(0.75, 1, n));
   }
   gl.uniform1f(U.uSize, small ? 36 : 42);

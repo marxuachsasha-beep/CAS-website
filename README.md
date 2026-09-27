@@ -6,7 +6,7 @@ of page transitions instead of just moving down a page:
 1. **Cover:** "Sasha Marxuach CAS Experience Website" in black type wrapped in a soft blue glow that slowly
    breathes, over a live WebGL galaxy in blues that follows the mouse.
 2. **What is CAS?** As you scroll, the title flies up and becomes the header while the camera flies into
-   the galaxy: the white fades away and you land on a light-blue page with a few glowing stars. Hover (or tap) one of the
+   the galaxy and lands on a white-mint page (the same style as About me) with a few small, sharp blue stars. Hover (or tap) one of the
    three glass circles, Creativity, Activity or Service, and it moves to the centre and shows what that
    strand means.
 3. **About me:** opens as a glowing portal out of the "CAS" centre. Scrolling (or swiping sideways) slides
