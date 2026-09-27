@@ -33,12 +33,17 @@
   <main class="stage" id="stage">
     <div class="stage__sticky">
 
+      <!-- backgrounds (the white cover fades away to reveal the blue page underneath) -->
+      <div class="bg bg--cas" aria-hidden="true"></div>
+      <div class="bg bg--home" aria-hidden="true"><div class="aurora"><i></i><i></i><i></i></div></div>
+
+      <!-- the galaxy: behind the cover title, then the starfield of "What is CAS?" -->
+      <canvas id="galaxy" aria-hidden="true"></canvas>
+
       <!-- =================================================================
            PAGE 1 · COVER
            ================================================================= -->
       <section class="scene scene--home" aria-label="Cover">
-        <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
-        <canvas id="galaxy" aria-hidden="true"></canvas>
         <div class="home__haze" aria-hidden="true"></div>
         <button class="home__cue" type="button" data-goto="cas">
           <span>Scroll to begin</span>
@@ -50,21 +55,6 @@
            PAGE 2 · WHAT IS CAS?
            ================================================================= -->
       <section class="scene scene--cas" id="what-is-cas" aria-labelledby="cas-title">
-        <div class="cas__bg" aria-hidden="true">
-          <i class="blob blob--1"></i><i class="blob blob--2"></i><i class="blob blob--3"></i>
-          <div class="dots"></div>
-          <span class="shape shape--ring" style="--x:8%;--y:20%;--s:70px;--d:0s"></span>
-          <span class="shape shape--plus" style="--x:44%;--y:14%;--s:26px;--d:-2s"></span>
-          <span class="shape shape--dot" style="--x:52%;--y:78%;--s:16px;--d:-4s"></span>
-          <span class="shape shape--ring" style="--x:90%;--y:12%;--s:34px;--d:-6s"></span>
-          <span class="shape shape--plus" style="--x:6%;--y:72%;--s:20px;--d:-1s"></span>
-          <span class="shape shape--dot" style="--x:94%;--y:62%;--s:10px;--d:-3s"></span>
-          <svg class="waves" viewBox="0 0 1440 200" preserveAspectRatio="none">
-            <path class="wave wave--back" d="M0 110 Q180 50 360 110 T720 110 T1080 110 T1440 110 T1800 110 T2160 110 T2520 110 T2880 110 V200 H0 Z"/>
-            <path class="wave wave--front" d="M0 140 Q180 90 360 140 T720 140 T1080 140 T1440 140 T1800 140 T2160 140 T2520 140 T2880 140 V200 H0 Z"/>
-          </svg>
-        </div>
-
         <div class="cas__inner">
           <div class="cas__text">
             <h2 class="cas__title" id="cas-title"><span data-chars>What is</span> <span class="cas__big" data-chars>CAS</span><span class="cas__q">?</span></h2>
@@ -76,14 +66,35 @@
             </p>
           </div>
 
-          <div class="venn" data-venn aria-hidden="true">
+          <!-- Hover (or tap) a circle: it moves to the middle and shows its description.
+               EDIT the three descriptions below if you want to phrase them your own way. -->
+          <div class="venn" data-venn>
+            <div class="venn__orbits" aria-hidden="true"><i></i><i></i></div>
             <div class="venn__rig">
-              <div class="venn__orbit"></div>
-              <div class="cw cw--c"><div class="circle circle--c"><span>Creativity</span></div></div>
-              <div class="cw cw--a"><div class="circle circle--a"><span>Activity</span></div></div>
-              <div class="cw cw--s"><div class="circle circle--s"><span>Service</span></div></div>
-              <span class="venn__core">CAS</span>
+              <button class="orb orb--c" type="button" data-strand="c" aria-expanded="false">
+                <span class="orb__glass" aria-hidden="true"></span>
+                <span class="orb__body">
+                  <span class="orb__name">Creativity</span>
+                  <span class="orb__desc">Exploring and extending ideas, leading to an original or interpretive product or performance.</span>
+                </span>
+              </button>
+              <button class="orb orb--a" type="button" data-strand="a" aria-expanded="false">
+                <span class="orb__glass" aria-hidden="true"></span>
+                <span class="orb__body">
+                  <span class="orb__name">Activity</span>
+                  <span class="orb__desc">Physical exertion that contributes to a healthy lifestyle.</span>
+                </span>
+              </button>
+              <button class="orb orb--s" type="button" data-strand="s" aria-expanded="false">
+                <span class="orb__glass" aria-hidden="true"></span>
+                <span class="orb__body">
+                  <span class="orb__name">Service</span>
+                  <span class="orb__desc">Collaborative, reciprocal work with the community in response to a real need.</span>
+                </span>
+              </button>
+              <span class="venn__core" aria-hidden="true">CAS</span>
             </div>
+            <p class="venn__hint" aria-hidden="true"><span class="hint-hover">Hover a circle</span><span class="hint-tap">Tap a circle</span></p>
           </div>
         </div>
       </section>
@@ -146,6 +157,7 @@
         <div class="about__dots" aria-hidden="true"><i class="is-on"></i><i></i></div>
       </section>
 
+      <div class="portal" aria-hidden="true"></div>
     </div>
   </main>
 

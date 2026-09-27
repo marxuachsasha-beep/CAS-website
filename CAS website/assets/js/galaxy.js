@@ -1,11 +1,10 @@
 /* Spiral galaxy drawn with raw WebGL (no libraries).
-   Sits behind the cover title, follows the mouse, and "flies in" when
-   main.js calls Galaxy.setWarp(0..1) during the first scroll transition.
-   THEME: "light" = colored ink on a white page, "dark" = glowing particles. */
+   Sits behind the cover title and follows the mouse. During the first scroll
+   transition main.js calls Galaxy.setWarp(0..1) (the camera flies into the
+   galaxy) and Galaxy.setNight(0..1) (ink-blue dots on white turn into glowing
+   stars on the blue "What is CAS?" page). */
 (function () {
   'use strict';
-
-  var THEME = 'light';
 
   var canvas = document.getElementById('galaxy');
   if (!canvas) return;
@@ -26,7 +25,7 @@
   var VS = [
     'attribute vec3 aPos; attribute vec4 aRnd;',
     'uniform mat4 uProj; uniform mat4 uView;',
-    'uniform float uTime; uniform float uPR; uniform float uSize; uniform float uMotion; uniform float uWarp;',
+    'uniform float uTime; uniform float uPR; uniform float uSize; uniform float uMotion; uniform float uWarp; uniform float uNight;',
     'uniform vec2 uMouse; uniform float uMouseOn;',
     'uniform vec3 uCore; uniform vec3 uMid; uniform vec3 uOuter; uniform vec3 uEdge; uniform vec3 uStar;',
     'varying vec3 vColor; varying float vAlpha;',
@@ -58,6 +57,8 @@
     '    col = mix(col, uStar, step(0.93, aRnd.y) * 0.6);',
     '    size = 0.45 + aRnd.w * 1.15;',
     '    vAlpha = mix(0.9, tw, 0.5);',
+    '    float thr = mix(1.05, 0.22, uNight);',
+    '    vAlpha *= max(1.0 - smoothstep(thr - 0.06, thr, aRnd.w), step(0.985, aRnd.w) * uNight);',
     '  }',
     '  vec4 mv = uView * vec4(p, 1.0);',
     '  gl_Position = uProj * mv;',
@@ -71,13 +72,13 @@
   var FS = [
     'precision mediump float;',
     'varying vec3 vColor; varying float vAlpha;',
-    'uniform float uOpacity;',
+    'uniform float uOpacity; uniform float uAdd;',
     'void main(){',
     '  float d = length(gl_PointCoord - 0.5);',
     '  float a = 1.0 - smoothstep(0.0, 0.5, d);',
     '  a = a * a * 0.7 + 0.75 * (1.0 - smoothstep(0.12, 0.26, d));',
     '  a = clamp(a * vAlpha * uOpacity, 0.0, 1.0);',
-    '  gl_FragColor = vec4(vColor * a, a);',
+    '  gl_FragColor = vec4(vColor * a, a * (1.0 - uAdd));',
     '}'
   ].join('\n');
 
@@ -150,26 +151,35 @@
 
   /* ---------- uniforms & colours ---------- */
   var U = {};
-  ['uProj', 'uView', 'uTime', 'uPR', 'uSize', 'uMotion', 'uWarp', 'uMouse', 'uMouseOn', 'uCore', 'uMid', 'uOuter', 'uEdge', 'uStar', 'uOpacity'].forEach(function (n) {
+  ['uProj', 'uView', 'uTime', 'uPR', 'uSize', 'uMotion', 'uWarp', 'uNight', 'uMouse', 'uMouseOn', 'uCore', 'uMid', 'uOuter', 'uEdge', 'uStar', 'uOpacity', 'uAdd'].forEach(function (n) {
     U[n] = gl.getUniformLocation(prog, n);
   });
   function rgb(hex) { var n = parseInt(hex.slice(1), 16); return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255]; }
-  var PALETTE = THEME === 'light'
-    ? { core: '#1d4ed8', mid: '#1f8fff', outer: '#0fb5a6', edge: '#2fcf7f', star: '#6aa8ff' }
-    : { core: '#e8fbff', mid: '#7fd8ff', outer: '#2fd6c4', edge: '#7be495', star: '#cfe8ff' };
-  gl.uniform3fv(U.uCore, rgb(PALETTE.core));
-  gl.uniform3fv(U.uMid, rgb(PALETTE.mid));
-  gl.uniform3fv(U.uOuter, rgb(PALETTE.outer));
-  gl.uniform3fv(U.uEdge, rgb(PALETTE.edge));
-  gl.uniform3fv(U.uStar, rgb(PALETTE.star));
-  gl.uniform1f(U.uSize, THEME === 'light' ? (small ? 36 : 42) : (small ? 30 : 34));
+  var KEYS = ['core', 'mid', 'outer', 'edge', 'star'];
+  var UNI = { core: 'uCore', mid: 'uMid', outer: 'uOuter', edge: 'uEdge', star: 'uStar' };
+  // day: ink blues on the white cover · night: glowing stars on the blue page
+  var DAY = { core: '#1e3a8a', mid: '#2563eb', outer: '#3b82f6', edge: '#60a5fa', star: '#93c5fd' };
+  var NIGHT = { core: '#ffffff', mid: '#e3eeff', outer: '#b4cfff', edge: '#d6e6ff', star: '#e6f0ff' };
+  KEYS.forEach(function (k) { DAY[k] = rgb(DAY[k]); NIGHT[k] = rgb(NIGHT[k]); });
+  var lastNight = -1;
+  function applyNight(n) {
+    if (Math.abs(n - lastNight) < 0.001) return;
+    lastNight = n;
+    KEYS.forEach(function (k) {
+      var a = DAY[k], b = NIGHT[k];
+      gl.uniform3f(U[UNI[k]], a[0] + (b[0] - a[0]) * n, a[1] + (b[1] - a[1]) * n, a[2] + (b[2] - a[2]) * n);
+    });
+    gl.uniform1f(U.uOpacity, 1.5 - 0.8 * n);
+    gl.uniform1f(U.uAdd, 0.85 * n);
+    gl.uniform1f(U.uNight, n);
+  }
+  gl.uniform1f(U.uSize, small ? 36 : 42);
   gl.uniform1f(U.uMotion, reduce ? 0 : 1);
-  gl.uniform1f(U.uOpacity, THEME === 'light' ? 1.5 : 1);
+  applyNight(0);
 
   gl.disable(gl.DEPTH_TEST);
   gl.enable(gl.BLEND);
-  if (THEME === 'light') gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-  else gl.blendFunc(gl.ONE, gl.ONE);
+  gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);                 // premultiplied; uAdd makes it glow additively
   gl.clearColor(0, 0, 0, 0);
 
   var FOV = 50 * Math.PI / 180, DIST = 7.2;
@@ -202,7 +212,7 @@
   document.addEventListener('pointerleave', function () { mouse.ton = 0; });
 
   /* ---------- loop ---------- */
-  var warp = 0, warpTarget = 0, visible = true, running = !document.hidden, raf = 0, last = 0, t0 = performance.now();
+  var warp = 0, warpTarget = 0, night = 0, nightTarget = 0, visible = true, running = !document.hidden, raf = 0, last = 0, t0 = performance.now();
   function frame(now) {
     raf = 0;
     if (!running || !visible) return;
@@ -210,6 +220,8 @@
     last = now;
     var time = (now - t0) / 1000;
     warp += (warpTarget - warp) * (reduce ? 1 : 1 - Math.exp(-dt * 8));
+    night += (nightTarget - night) * (reduce ? 1 : 1 - Math.exp(-dt * 8));
+    applyNight(night);
     var me = 1 - Math.exp(-dt * 4);
     mouse.x += (mouse.tx - mouse.x) * me;
     mouse.y += (mouse.ty - mouse.y) * me;
@@ -247,6 +259,7 @@
 
   window.Galaxy = {
     setWarp: function (v) { warpTarget = v; },
+    setNight: function (v) { nightTarget = v; },
     setVisible: function (v) { if (v !== visible) { visible = v; start(); } }
   };
 })();
