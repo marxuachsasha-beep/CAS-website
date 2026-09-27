@@ -28,7 +28,7 @@
   var track = $('.about__track'), bgText = $('.about__bgtext'), thread = $('.about__thread');
   var hint = $('.about__hint'), cue = $('.home__cue'), dots = $$('.about__dots i');
   var brand = $('#brand'), bar = $('.brand__bar');
-  var words = $$('.brand__title .bw'), faces = $$('.brand__title .bw__t'), dockWords = $$('.brand__dock span');
+  var words = $$('.brand__title .bw'), dockWords = $$('.brand__dock span');
   var photos12 = $$('.photo--1, .photo--2'), photo3 = $('.photo--3');
   var venn = $('[data-venn]'), rig = $('.venn__rig'), orbs = $$('.orb');
 
@@ -83,21 +83,7 @@
       return { dx: b.left - a.left, dy: b.top - a.top, s: b.width / Math.max(1, a.width) };
     });
 
-    // 2. stretch one sheen gradient across the whole title, for both layouts (cover and docked bar),
-    //    so it reads as a single highlight. Layout offsets ignore the intro animation.
-    function span(list) {
-      var l = Infinity, r = -Infinity;
-      list.forEach(function (e) { l = Math.min(l, e.offsetLeft); r = Math.max(r, e.offsetLeft + e.offsetWidth); });
-      return { l: l, w: r - l };
-    }
-    var hero = span(faces), dock = span(dockWords);
-    flight.forEach(function (f, i) {
-      f.off0 = faces[i].offsetLeft - hero.l;  f.tw0 = hero.w;
-      f.off1 = (dockWords[i].offsetLeft - dock.l) / f.s;  f.tw1 = dock.w / f.s;   // in the word's unscaled units
-      forget(faces[i], '--off'); forget(faces[i], '--tw');
-    });
-
-    // 3. the CAS centre of the diagram: the About me portal opens from here
+    // 2. the CAS centre of the diagram: the About me portal opens from here
     var prev = casInner.style.transform;
     casInner.style.transform = 'none';
     var v = venn.getBoundingClientRect(), s = sticky.getBoundingClientRect();
@@ -132,8 +118,6 @@
       var s = 1 + (f.s - 1) * q;
       css(words[i], 'transform', q === 0 ? 'none' :
         'translate3d(' + (f.dx * q).toFixed(2) + 'px,' + (f.dy * q).toFixed(2) + 'px,0) scale(' + s.toFixed(4) + ')');
-      css(faces[i], '--off', (f.off0 + (f.off1 - f.off0) * q).toFixed(1) + 'px');
-      css(faces[i], '--tw', (f.tw0 + (f.tw1 - f.tw0) * q).toFixed(1) + 'px');
     });
     toggle(brand, 'is-docked', t1 > 0.97);
     css(bar, 'opacity', smooth(0.75, 1, t1).toFixed(3));
@@ -204,9 +188,17 @@
       o.setAttribute('aria-expanded', String(on));
     });
   }
+  // while the circles are swapping places, the one shrinking away briefly passes under the cursor;
+  // ignore hover during that time or the two would flip back and forth
+  var hoverLock = 0;
   orbs.forEach(function (o) {
     var k = o.getAttribute('data-strand');
-    if (fine) o.addEventListener('pointerenter', function () { openOrb(k); });
+    if (fine) o.addEventListener('pointerenter', function () {
+      var now = performance.now();
+      if (now < hoverLock || k === openKey) return;
+      if (openKey) hoverLock = now + 750;
+      openOrb(k);
+    });
     o.addEventListener('click', function () { openOrb(!fine && openKey === k ? null : k); });
     o.addEventListener('focus', function () {                     // keyboard focus only; a tap is handled by click
       var kb = true;

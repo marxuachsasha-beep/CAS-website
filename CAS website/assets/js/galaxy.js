@@ -25,16 +25,18 @@
   var VS = [
     'attribute vec3 aPos; attribute vec4 aRnd;',
     'uniform mat4 uProj; uniform mat4 uView;',
-    'uniform float uTime; uniform float uPR; uniform float uSize; uniform float uMotion; uniform float uWarp; uniform float uNight;',
+    'uniform float uTime; uniform float uPR; uniform float uSize; uniform float uMotion; uniform float uWarp; uniform float uNight; uniform float uKeep; uniform float uStarMix;',
     'uniform vec2 uMouse; uniform float uMouseOn;',
     'uniform vec3 uCore; uniform vec3 uMid; uniform vec3 uOuter; uniform vec3 uEdge; uniform vec3 uStar;',
-    'varying vec3 vColor; varying float vAlpha;',
+    'varying vec3 vColor; varying float vAlpha; varying float vStar; varying float vSpike;',
     'vec3 rotY(vec3 p, float a){ float c = cos(a), s = sin(a); return vec3(c*p.x + s*p.z, p.y, -s*p.x + c*p.z); }',
     'vec3 rotX(vec3 p, float a){ float c = cos(a), s = sin(a); return vec3(p.x, c*p.y - s*p.z, s*p.y + c*p.z); }',
     'vec3 rotZ(vec3 p, float a){ float c = cos(a), s = sin(a); return vec3(c*p.x - s*p.y, s*p.x + c*p.y, p.z); }',
     'void main(){',
     '  vec3 p; vec3 col; float size;',
     '  float tw = 0.7 + 0.3 * sin(uTime * (1.1 + aRnd.y) + aRnd.x * 37.0);',
+    '  float h1 = fract(sin(dot(aRnd.xy, vec2(12.9898, 78.233))) * 43758.5453);',
+    '  float h2 = fract(sin(dot(aRnd.yz, vec2(39.3468, 11.1353))) * 24634.6345);',
     '  if (aRnd.w < 0.0) {',
     '    p = aPos;',
     '    col = uStar;',
@@ -57,26 +59,34 @@
     '    col = mix(col, uStar, step(0.93, aRnd.y) * 0.6);',
     '    size = 0.45 + aRnd.w * 1.15;',
     '    vAlpha = mix(0.9, tw, 0.5);',
-    '    float thr = mix(1.05, 0.22, uNight);',
-    '    vAlpha *= max(1.0 - smoothstep(thr - 0.06, thr, aRnd.w), step(0.985, aRnd.w) * uNight);',
     '  }',
+    '  vAlpha *= clamp((uKeep - h1) * 80.0, 0.0, 1.0);',                  // at night only a few survive
     '  vec4 mv = uView * vec4(p, 1.0);',
     '  gl_Position = uProj * mv;',
-    '  float px = uSize * size * uPR / max(0.4, -mv.z);',
-    '  gl_PointSize = min(px, 40.0 * uPR);',
-    '  vAlpha *= 1.0 - 0.8 * smoothstep(7.0 * uPR, 34.0 * uPR, px);',
+    '  float dayPx = uSize * size * uPR / max(0.4, -mv.z);',
+    '  float starPx = (16.0 + 26.0 * h2 * h2) * uPR;',                      // glow sprite; the bright core is ~1/6 of it
+    '  gl_PointSize = min(mix(dayPx, starPx, uStarMix), 48.0 * uPR);',
+    '  vAlpha *= 1.0 - 0.8 * smoothstep(7.0 * uPR, 34.0 * uPR, dayPx) * (1.0 - uStarMix);',
+    '  vStar = uStarMix;',
+    '  vSpike = smoothstep(0.55, 0.95, h2);',
     '  vColor = col;',
     '}'
   ].join('\n');
 
   var FS = [
     'precision mediump float;',
-    'varying vec3 vColor; varying float vAlpha;',
+    'varying vec3 vColor; varying float vAlpha; varying float vStar; varying float vSpike;',
     'uniform float uOpacity; uniform float uAdd;',
     'void main(){',
-    '  float d = length(gl_PointCoord - 0.5);',
-    '  float a = 1.0 - smoothstep(0.0, 0.5, d);',
-    '  a = a * a * 0.7 + 0.75 * (1.0 - smoothstep(0.12, 0.26, d));',
+    '  vec2 c = gl_PointCoord - 0.5;',
+    '  float d = length(c);',
+    '  float dotA = 1.0 - smoothstep(0.0, 0.5, d);',                      // cover: soft round ink dot
+    '  dotA = dotA * dotA * 0.7 + 0.75 * (1.0 - smoothstep(0.12, 0.26, d));',
+    '  float core = exp(-d * d * 220.0);',                                    // night: a glowing star
+    '  float halo = exp(-d * 7.0) * 0.55;',
+    '  float spikes = exp(-abs(c.x) * 70.0) * exp(-abs(c.y) * 8.0) + exp(-abs(c.y) * 70.0) * exp(-abs(c.x) * 8.0);',
+    '  float starA = (core + halo + spikes * 0.6 * vSpike) * (1.0 - smoothstep(0.36, 0.5, d));',
+    '  float a = mix(dotA, starA, vStar);',
     '  a = clamp(a * vAlpha * uOpacity, 0.0, 1.0);',
     '  gl_FragColor = vec4(vColor * a, a * (1.0 - uAdd));',
     '}'
@@ -151,7 +161,7 @@
 
   /* ---------- uniforms & colours ---------- */
   var U = {};
-  ['uProj', 'uView', 'uTime', 'uPR', 'uSize', 'uMotion', 'uWarp', 'uNight', 'uMouse', 'uMouseOn', 'uCore', 'uMid', 'uOuter', 'uEdge', 'uStar', 'uOpacity', 'uAdd'].forEach(function (n) {
+  ['uProj', 'uView', 'uTime', 'uPR', 'uSize', 'uMotion', 'uWarp', 'uNight', 'uKeep', 'uStarMix', 'uMouse', 'uMouseOn', 'uCore', 'uMid', 'uOuter', 'uEdge', 'uStar', 'uOpacity', 'uAdd'].forEach(function (n) {
     U[n] = gl.getUniformLocation(prog, n);
   });
   function rgb(hex) { var n = parseInt(hex.slice(1), 16); return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255]; }
@@ -169,9 +179,14 @@
       var a = DAY[k], b = NIGHT[k];
       gl.uniform3f(U[UNI[k]], a[0] + (b[0] - a[0]) * n, a[1] + (b[1] - a[1]) * n, a[2] + (b[2] - a[2]) * n);
     });
-    gl.uniform1f(U.uOpacity, 1.5 - 0.8 * n);
+    gl.uniform1f(U.uOpacity, 1.5 - 0.1 * n);
     gl.uniform1f(U.uAdd, 0.85 * n);
     gl.uniform1f(U.uNight, n);
+    // fly-in keeps the small dots and thins them out; only the ~3% that survive bloom into stars, at the very end
+    function ss(a, b, v) { var t = Math.min(1, Math.max(0, (v - a) / (b - a))); return t * t * (3 - 2 * t); }
+    var keep = 1.02 + (0.25 - 1.02) * ss(0, 0.7, n);
+    gl.uniform1f(U.uKeep, keep + (0.03 - keep) * ss(0.7, 1, n));
+    gl.uniform1f(U.uStarMix, ss(0.75, 1, n));
   }
   gl.uniform1f(U.uSize, small ? 36 : 42);
   gl.uniform1f(U.uMotion, reduce ? 0 : 1);

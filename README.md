@@ -3,10 +3,10 @@
 A custom, scroll-animated IB CAS website. It's built as one pinned "stage", so scrolling plays a sequence
 of page transitions instead of just moving down a page:
 
-1. **Cover:** "Sasha Marxuach CAS Experience Website" in glossy black type with a soft silver sheen that
-   drifts slowly across it, over a live WebGL galaxy in blues that follows the mouse.
+1. **Cover:** "Sasha Marxuach CAS Experience Website" in black type wrapped in a soft blue glow that slowly
+   breathes, over a live WebGL galaxy in blues that follows the mouse.
 2. **What is CAS?** As you scroll, the title flies up and becomes the header while the camera flies into
-   the galaxy: the white fades away and you land on a cobalt page among the stars. Hover (or tap) one of the
+   the galaxy: the white fades away and you land on a light-blue page with a few glowing stars. Hover (or tap) one of the
    three glass circles, Creativity, Activity or Service, and it moves to the centre and shows what that
    strand means.
 3. **About me:** opens as a glowing portal out of the "CAS" centre. Scrolling (or swiping sideways) slides
